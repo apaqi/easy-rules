@@ -1,0 +1,32 @@
+---
+name: "fizz rule"
+description: "print fizz if the number is multiple of 5"
+priority: 1
+condition: "number % 5 == 0"
+actions:
+- "System.out.println(\"fizz 能被 5\")"
+
+---
+name: "buzz rule"
+description: "print buzz if the number is multiple of 7"
+priority: 2
+condition: "number % 7 == 0"
+actions:
+- "System.out.println(\"buzz 能被 7\")"
+
+---
+name: "fizzbuzz rule"
+description: "print fizzbuzz if the number is multiple of 5 and 7"
+priority: 0
+condition: "number % 5 == 0 && number % 7 == 0"
+actions:
+- "System.out.println(\"fizzbuzz 能被5 和 7\")"
+
+---
+name: "non fizzbuzz rule"
+description: "print the number itself otherwise"
+priority: 3
+condition: "number % 5 != 0 || number % 7 != 0"
+actions:
+- "System.out.println(number)"
+- "org.jeasy.rules.tutorials.mvel.TestMethod.dd()"
