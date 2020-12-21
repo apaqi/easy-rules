@@ -23,10 +23,7 @@
  */
 package org.jeasy.rules.tutorials.mvel;
 
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rules;
-import org.jeasy.rules.api.RulesEngine;
-import org.jeasy.rules.api.RulesEngineParameters;
+import org.jeasy.rules.api.*;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.jeasy.rules.mvel.MVELRuleFactory;
 import org.jeasy.rules.support.reader.YamlRuleDefinitionReader;
@@ -34,6 +31,7 @@ import org.mvel2.ParserContext;
 import org.testng.annotations.Test;
 
 import java.io.FileReader;
+import java.util.Map;
 
 public class MvelRuleTest {
 
@@ -60,19 +58,20 @@ public class MvelRuleTest {
     @Test
     public void test_UnitRuleGroupFile() throws Exception {
         // create a rules engine
-        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(true);
+        RulesEngineParameters parameters = new RulesEngineParameters().skipOnFirstAppliedRule(false);
         RulesEngine fizzBuzzEngine = new DefaultRulesEngine(parameters);
         // create rules
         String root = System.getProperty("user.dir");
         MVELRuleFactory ruleFactory = new MVELRuleFactory(new YamlRuleDefinitionReader());
         Rules rules = ruleFactory.createRules(new FileReader(root + "/src/main/resources/unitRuleGroupFile.txt"));
         User user = new User() {{
-            setAge(10);
+            setAge(30);
             setName("wpx");
         }};
         // fire rules
         Facts facts = new Facts();
         facts.put("user", user);
+        Map<Rule, Boolean> check = fizzBuzzEngine.check(rules, facts);
         fizzBuzzEngine.fire(rules, facts);
         System.out.println();
     }

@@ -39,6 +39,7 @@ public class Launcher {
     public static void main(String[] args) throws Exception {
         //create a person instance (fact)
         Person tom = new Person("Tom", 14);
+        tom.setAdult(false);
         Facts facts = new Facts();
         facts.put("person", tom);
 

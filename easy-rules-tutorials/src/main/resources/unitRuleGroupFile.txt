@@ -13,6 +13,13 @@ composingRules:
   - name: "3"
     description: "3"
     condition: "user.name.length<10"
-    priority: 3
+    priority: 2
     actions:
       - "System.out.println(\"UnitRuleGroup rule3 \")"
+---
+name: "4"
+description: "4"
+condition: "user.name.length<10"
+priority: 1
+actions:
+  - "org.jeasy.rules.tutorials.mvel.TestMethod.dd()"
