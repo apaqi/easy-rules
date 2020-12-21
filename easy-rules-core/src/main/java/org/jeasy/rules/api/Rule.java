@@ -81,6 +81,12 @@ public interface Rule extends Comparable<Rule> {
     boolean evaluate(Facts facts);
 
     /**
+     * 定制化需求：
+     * 多个||条件，如果不是最后一个，则不抛出异常
+     */
+    boolean evaluateNoException(Facts facts);
+
+    /**
      * This method implements the rule's action(s).
      * @throws Exception thrown if an exception occurs when performing action(s)
      */

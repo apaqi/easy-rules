@@ -99,6 +99,11 @@ public class BasicRule implements Rule {
         return false;
     }
 
+    @Override
+    public boolean evaluateNoException(Facts facts) {
+        return evaluate(facts);
+    }
+
     /**
      * {@inheritDoc}
      */

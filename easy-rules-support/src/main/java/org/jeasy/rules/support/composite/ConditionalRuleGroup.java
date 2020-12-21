@@ -105,6 +105,11 @@ public class ConditionalRuleGroup extends CompositeRule {
         return false;
     }
 
+    @Override
+    public boolean evaluateNoException(Facts facts) {
+        return evaluate(facts);
+    }
+
     /**
      * When a conditional rule group is executed, all rules that evaluated to true
      * are performed in their natural order, but with the conditional rule 

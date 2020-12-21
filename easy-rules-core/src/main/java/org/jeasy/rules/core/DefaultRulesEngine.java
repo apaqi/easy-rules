@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * Default {@link RulesEngine} implementation.
- *
+ * <p>
  * Rules are fired according to their natural order which is priority by default.
  * This implementation iterates over the sorted set of rules, evaluates the condition
  * of each rule and executes its actions if the condition evaluates to true.
@@ -69,6 +69,11 @@ public final class DefaultRulesEngine extends AbstractRulesEngine {
         triggerListenersBeforeRules(rules, facts);
         doFire(rules, facts);
         triggerListenersAfterRules(rules, facts);
+    }
+
+    @Override
+    public void fireGroupNoException(Rules rules, Facts facts) {
+        doFireGroup(rules, facts);
     }
 
     void doFire(Rules rules, Facts facts) {
@@ -133,6 +138,70 @@ public final class DefaultRulesEngine extends AbstractRulesEngine {
                 }
             }
         }
+    }
+
+    boolean doFireGroup(Rules rules, Facts facts) {
+        if (rules.isEmpty()) {
+            LOGGER.warn("No rules registered! Nothing to apply");
+            return false;
+        }
+        logEngineParameters();
+        log(rules);
+        log(facts);
+        LOGGER.debug("Rules evaluation started");
+        Rule rule = rules.iterator().next();
+        final String name = rule.getName();
+        final int priority = rule.getPriority();
+        if (priority > parameters.getPriorityThreshold()) {
+            LOGGER.debug("Rule priority threshold ({}) exceeded at rule '{}' with priority={}, next rules will be skipped",
+                    parameters.getPriorityThreshold(), name, priority);
+            return false;
+        }
+        if (!shouldBeEvaluated(rule, facts)) {
+            LOGGER.debug("Rule '{}' has been skipped before being evaluated", name);
+            return false;
+        }
+        boolean evaluationResult = false;
+        try {
+            evaluationResult = rule.evaluateNoException(facts);
+        } catch (RuntimeException exception) {
+            LOGGER.error("Rule '" + name + "' evaluated with error", exception);
+            triggerListenersOnEvaluationError(rule, facts, exception);
+            // give the option to either skip next rules on evaluation error or continue by considering the evaluation error as false
+            if (parameters.isSkipOnFirstNonTriggeredRule()) {
+                LOGGER.debug("Next rules will be skipped since parameter skipOnFirstNonTriggeredRule is set");
+                return false;
+            }
+        }
+        if (evaluationResult) {
+            LOGGER.debug("Rule '{}' triggered", name);
+            triggerListenersAfterEvaluate(rule, facts, true);
+            try {
+                triggerListenersBeforeExecute(rule, facts);
+                rule.execute(facts);
+                LOGGER.debug("Rule '{}' performed successfully", name);
+                triggerListenersOnSuccess(rule, facts);
+                if (parameters.isSkipOnFirstAppliedRule()) {
+                    LOGGER.debug("Next rules will be skipped since parameter skipOnFirstAppliedRule is set");
+                    return false;
+                }
+            } catch (Exception exception) {
+                LOGGER.error("Rule '" + name + "' performed with error", exception);
+                triggerListenersOnFailure(rule, exception, facts);
+                if (parameters.isSkipOnFirstFailedRule()) {
+                    LOGGER.debug("Next rules will be skipped since parameter skipOnFirstFailedRule is set");
+                    return false;
+                }
+            }
+        } else {
+            LOGGER.debug("Rule '{}' has been evaluated to false, it has not been executed", name);
+            triggerListenersAfterEvaluate(rule, facts, false);
+            if (parameters.isSkipOnFirstNonTriggeredRule()) {
+                LOGGER.debug("Next rules will be skipped since parameter skipOnFirstNonTriggeredRule is set");
+                return false;
+            }
+        }
+        return evaluationResult;
     }
 
     private void logEngineParameters() {

@@ -91,6 +91,13 @@ public abstract class CompositeRule extends BasicRule {
     @Override
     public abstract boolean evaluate(Facts facts);
 
+    /**
+     * 定制化需求：
+     * 多个||条件，如果不是最后一个，则不抛出异常
+     */
+    @Override
+    public abstract boolean evaluateNoException(Facts facts);
+
     @Override
     public abstract void execute(Facts facts) throws Exception;
 

@@ -83,6 +83,11 @@ public class UnitRuleGroup extends CompositeRule {
     }
 
     @Override
+    public boolean evaluateNoException(Facts facts) {
+        return evaluate(facts);
+    }
+
+    @Override
     public void execute(Facts facts) throws Exception {
         for (Rule rule : rules) {
             rule.execute(facts);

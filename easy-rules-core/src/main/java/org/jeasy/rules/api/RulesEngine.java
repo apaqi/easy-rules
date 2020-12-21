@@ -71,4 +71,12 @@ public interface RulesEngine {
     default Map<Rule, Boolean> check(Rules rules, Facts facts) {
         return Collections.emptyMap();
     }
+
+    /**
+     * catch the exception only if it did not thowed by the last rule
+     *
+     * @param rules
+     * @param facts
+     */
+    void fireGroupNoException(Rules rules, Facts facts);
 }

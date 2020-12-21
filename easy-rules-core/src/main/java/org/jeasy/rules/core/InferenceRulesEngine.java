@@ -84,6 +84,11 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
         } while (!selectedRules.isEmpty());
     }
 
+    @Override
+    public void fireGroupNoException(Rules rules, Facts facts) {
+        this.fire(rules, facts);
+    }
+
     private Set<Rule> selectCandidates(Rules rules, Facts facts) {
         Set<Rule> candidates = new TreeSet<>();
         for (Rule rule : rules) {
@@ -103,6 +108,7 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
      * Register a rule listener.
      * @param ruleListener to register
      */
+    @Override
     public void registerRuleListener(RuleListener ruleListener) {
         super.registerRuleListener(ruleListener);
         delegate.registerRuleListener(ruleListener);
@@ -112,6 +118,7 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
      * Register a list of rule listener.
      * @param ruleListeners to register
      */
+    @Override
     public void registerRuleListeners(List<RuleListener> ruleListeners) {
         super.registerRuleListeners(ruleListeners);
         delegate.registerRuleListeners(ruleListeners);
@@ -121,6 +128,7 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
      * Register a rules engine listener.
      * @param rulesEngineListener to register
      */
+    @Override
     public void registerRulesEngineListener(RulesEngineListener rulesEngineListener) {
         super.registerRulesEngineListener(rulesEngineListener);
         delegate.registerRulesEngineListener(rulesEngineListener);
@@ -130,6 +138,7 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
      * Register a list of rules engine listener.
      * @param rulesEngineListeners to register
      */
+    @Override
     public void registerRulesEngineListeners(List<RulesEngineListener> rulesEngineListeners) {
         super.registerRulesEngineListeners(rulesEngineListeners);
         delegate.registerRulesEngineListeners(rulesEngineListeners);

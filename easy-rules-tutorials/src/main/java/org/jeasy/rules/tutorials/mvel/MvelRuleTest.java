@@ -94,7 +94,7 @@ public class MvelRuleTest {
         // fire rules
         Facts facts = new Facts();
         facts.put("user", user);
-        fizzBuzzEngine.fire(rules, facts);
+        fizzBuzzEngine.fireGroupNoException(rules, facts);
         System.out.println();
     }
 

@@ -29,12 +29,12 @@ import org.jeasy.rules.api.Rule;
 import java.util.TreeSet;
 
 /**
- * An activation rule group is a composite rule that fires the first applicable 
+ * An activation rule group is a composite rule that fires the first applicable
  * rule and ignores other rules in the group (XOR logic).
  * Rules are first sorted by their natural order (priority by default) within the group.
  *
  * <strong>This class is not thread-safe.</strong>
- * 
+ *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class ActivationRuleGroup extends CompositeRule {
@@ -93,9 +93,35 @@ public class ActivationRuleGroup extends CompositeRule {
     }
 
     @Override
+    public boolean evaluateNoException(Facts facts) {
+        int index = 0;
+        boolean evaluate = false;
+        for (Rule rule : rules) {
+            try {
+                evaluate = rule.evaluate(facts);
+            } catch (Exception e) {
+                index++;
+            }
+            if (evaluate) {
+                selectedRule = rule;
+                return true;
+            }
+        }
+        //如果是最后一个|| 条件异常，则抛出异常信息
+        if(isLastRuleException(index)) {
+            throw new RuntimeException("the last rule evaluate exception");
+        }
+        return false;
+    }
+
+    @Override
     public void execute(Facts facts) throws Exception {
         if (selectedRule != null) {
             selectedRule.execute(facts);
         }
+    }
+
+    private boolean isLastRuleException(int index){
+        return index == rules.size() - 1;
     }
 }
